@@ -5,6 +5,9 @@
     "react-scripts": "^4.0.0"
   },
   "main": "/index.js",
-  "type": "module",
-  "devDependencies": {}
+  "devDependencies": {},
+  "rules": {
+    "react/jsx-uses-react": "off",
+    "react/react-in-jsx-scope": "off"
+  }
 }

@@ -9,13 +9,15 @@
     "react-scripts": "1.0.0"
   },
   "name": "tictactoe",
-  "description": "null",
-  "version": "0.1.0",
-  "type": "module",
+  "version": "0.0.0",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
+  },
+  "rules": {
+    "react/jsx-uses-react": "off",
+    "react/react-in-jsx-scope": "off"
   }
 }
