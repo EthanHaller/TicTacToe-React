@@ -1,14 +1,15 @@
 import React from 'react';
 import { useState } from 'react';
 
-function Square({ value, onSquareClick, squareColor }) {
-  return <button className="square" onClick={onSquareClick} color={squareColor}>{value}</button>
+function Square({ value, onSquareClick, isWinner }) {
+  if(isWinner) return  <button className="square-winner" onClick={onSquareClick}>{value}</button>
+  else return <button className="square" onClick={onSquareClick}>{value}</button>
 }
 
 function Board({ xIsNext, squares, onPlay }) {
 
   function handleClick(i) {
-    if(squares[i] || calculateWinner(squares)) return;
+    if(squares[i] || calculateWinner(squares)[0] !== "None") return;
     const nextSquares = squares.slice();
 
     xIsNext ? nextSquares[i] = "X" : nextSquares[i] = "O";
@@ -17,31 +18,30 @@ function Board({ xIsNext, squares, onPlay }) {
   }
 
   const winner = calculateWinner(squares);
-  let status;
-  if (winner) {
-    if(winner === "Draw") status = "Draw";
-    else status = "Winner: " + winner;
-  } else {
-    status = "Next player: " + (xIsNext ? "X" : "O");
-  }
+  const winningRows = winner[1];
 
+  let status;
+  if(winner[0] === "None") status = "Next player: " + (xIsNext ? "X" : "O");
+  else if(winner[0] === "Draw") status = "Draw";
+  else status = "Winner: " + winner[0];
+  
   return (
     <React.Fragment>
       <div className="status">{status}</div>
       <div className="board-row">
-        <Square value={squares[0]} onSquareClick={() => handleClick(0)} squareColor={"#ff5c5c"}/>
-        <Square value={squares[1]} onSquareClick={() => handleClick(1)}/>
-        <Square value={squares[2]} onSquareClick={() => handleClick(2)}/>
+        <Square value={squares[0]} onSquareClick={() => handleClick(0)} isWinner={winningRows[0]}/>
+        <Square value={squares[1]} onSquareClick={() => handleClick(1)} isWinner={winningRows[1]}/>
+        <Square value={squares[2]} onSquareClick={() => handleClick(2)} isWinner={winningRows[2]}/>
       </div>
       <div className="board-row">
-        <Square value={squares[3]} onSquareClick={() => handleClick(3)}/>
-        <Square value={squares[4]} onSquareClick={() => handleClick(4)}/>
-        <Square value={squares[5]} onSquareClick={() => handleClick(5)}/>
+        <Square value={squares[3]} onSquareClick={() => handleClick(3)} isWinner={winningRows[3]}/>
+        <Square value={squares[4]} onSquareClick={() => handleClick(4)} isWinner={winningRows[4]}/>
+        <Square value={squares[5]} onSquareClick={() => handleClick(5)} isWinner={winningRows[5]}/>
       </div>
       <div className="board-row">
-        <Square value={squares[6]} onSquareClick={() => handleClick(6)}/>
-        <Square value={squares[7]} onSquareClick={() => handleClick(7)}/>
-        <Square value={squares[8]} onSquareClick={() => handleClick(8)}/>
+        <Square value={squares[6]} onSquareClick={() => handleClick(6)} isWinner={winningRows[6]}/>
+        <Square value={squares[7]} onSquareClick={() => handleClick(7)} isWinner={winningRows[7]}/>
+        <Square value={squares[8]} onSquareClick={() => handleClick(8)} isWinner={winningRows[8]}/>
       </div>
     </React.Fragment>
   );
@@ -75,6 +75,8 @@ export default function Game() {
   });
 
   return (
+    <React.Fragment>
+    <h1 className="title">Tic-Tac-Toe</h1>
     <div className="game">
       <div className="game-board">
         <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay}/>
@@ -83,10 +85,12 @@ export default function Game() {
         <o1>{moves}</o1>
       </div>
     </div>
+    </React.Fragment>
   );
 }
 
 function calculateWinner(squares) {
+  const winner = [false, false, false, false, false, false, false, false, false];
   const lines = [
     [0, 1, 2],
     [3, 4, 5],
@@ -100,7 +104,10 @@ function calculateWinner(squares) {
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+      for(let j=0; j < lines[i].length; j++){
+        winner[j] = true;
+      }
+      return [squares[a], winner];
     }
   }
 
@@ -109,7 +116,6 @@ function calculateWinner(squares) {
     if(!squares[i]) isBoardFull = false;
   }
 
-  if(isBoardFull) return "Draw";
-  else return null;
-
+  if(isBoardFull) return ["Draw", winner];
+  else return ["None", winner];
 }
