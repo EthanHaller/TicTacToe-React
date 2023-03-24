@@ -2,8 +2,14 @@ import React from 'react';
 import { useState } from 'react';
 
 function Square({ value, onSquareClick, isWinner }) {
-  if(isWinner) return  <button className="square-winner" onClick={onSquareClick}>{value}</button>
-  else return <button className="square" onClick={onSquareClick}>{value}</button>
+  if(isWinner){
+    if(value === "X") return <button className="square-winner" id="X-win" onClick={onSquareClick}>{value}</button>
+    else return <button className="square-winner" id="O-win" onClick={onSquareClick}>{value}</button>
+  }
+  else{
+    if(value === "X") return <button className="square" id="X" onClick={onSquareClick}>{value}</button>
+    else return <button className="square" id="O" onClick={onSquareClick}>{value}</button>
+  }
 }
 
 function Board({ xIsNext, squares, onPlay }) {
@@ -69,7 +75,7 @@ export default function Game() {
 
     return (
       <li key={move}>
-        <button onClick={() => jumpTo(move)}>{description}</button>
+        <button className="info-button" onClick={() => jumpTo(move)}>{description}</button>
       </li>
     );
   });
@@ -77,14 +83,14 @@ export default function Game() {
   return (
     <React.Fragment>
     <h1 className="title">Tic-Tac-Toe</h1>
-    <div className="game">
-      <div className="game-board">
-        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay}/>
+      <div className="game">
+        <div className="game-board">
+          <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay}/>
+        </div>
+        <div className="game-info">
+          <o1>{moves}</o1>
+        </div>
       </div>
-      <div className="game-info">
-        <o1>{moves}</o1>
-      </div>
-    </div>
     </React.Fragment>
   );
 }
@@ -105,7 +111,7 @@ function calculateWinner(squares) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
       for(let j=0; j < lines[i].length; j++){
-        winner[j] = true;
+        winner[lines[i][j]] = true;
       }
       return [squares[a], winner];
     }
